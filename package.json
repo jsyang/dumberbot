@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/jsyang/dumberbot#readme",
   "dependencies": {
+    "@types/node": "^8.0.17",
+    "active-window": "jsyang/active-window",
+    "clipboardy": "^1.1.4",
     "robotjs": "^0.4.7",
     "ts-node": "^3.3.0",
     "typescript": "^2.4.2"

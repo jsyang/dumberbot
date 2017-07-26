@@ -1,0 +1,12 @@
+const BACKGROUND = 'a79f8a'; 
+const ACTIVE_CONTROL = '33f2bf';
+const BLACK = '000000';
+const OSX_WINDOW_ACTION_BUTTON = '646464';
+
+
+export default {
+    BACKGROUND,
+    ACTIVE_CONTROL,
+    BLACK,
+    OSX_WINDOW_ACTION_BUTTON
+};
