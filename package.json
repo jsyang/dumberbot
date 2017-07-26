@@ -1,0 +1,25 @@
+{
+  "name": "dumberbot",
+  "version": "1.0.0",
+  "description": "vs Dumbot",
+  "main": "index.js",
+  "scripts": {
+    "rebuild-robot": "cd node_modules/robotjs ; node-gyp rebuild",
+    "start": "ts-node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsyang/dumberbot.git"
+  },
+  "author": "jsyang.ca@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jsyang/dumberbot/issues"
+  },
+  "homepage": "https://github.com/jsyang/dumberbot#readme",
+  "dependencies": {
+    "robotjs": "^0.4.7",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.4.2"
+  }
+}
