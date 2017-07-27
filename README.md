@@ -13,3 +13,22 @@ a bot vs Dumbot
 4. Field marshal (tactical decisions)
 5. Commander (strategic decisions)
 ```
+
+## General Tactics
+
+### Next-move metrics
+
+**Composition** is the ratio of enemy rings vs own rings in a stack. A higher composition is favored
+ as the target of the next move.
+ 
+**Disposition** is the number of defenders of a stack. Enemy disposition is the number of available 
+stacks the enemy has to cover a position, vs own disposition which is the number of stacks you have
+that can move on top of the position of interest.
+
+**Locality** is the density of stacks of the same color in a neighborhood of 7 positions (1 central + 6 adjacent).
+
+### Strategies
+
+1. Early-game
+2. Mid-game
+3. End-game
