@@ -57,6 +57,10 @@ chownr@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.0.1.tgz#e2a75042a9551908bebd25b8523d5f9769d79181"
 
+clear@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/clear/-/clear-0.0.1.tgz#e5186e229d99448179c130311b6f9d30bff6b0ba"
+
 clipboardy@^1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/clipboardy/-/clipboardy-1.1.4.tgz#51b17574fc682588e2dd295cfa6e6aa109eab5ee"
