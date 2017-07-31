@@ -31,8 +31,15 @@ interface IRelativeCell {
 
 // Will eventually reference http://www.red-bean.com/sgf/user_guide/index.html
 
+const STACK_WHITE = /w/g;
+const STACK_BLACK = /b/g;
+const STACK_DVONN = /d/g;
+
+const getLastChar = s => s[s.length - 1];
+
 export default class Board {
     state = createState();
+    color = 'w';
 
     getDiagonalsForCell = name => {
         const column = name[0];
@@ -96,6 +103,53 @@ export default class Board {
         return legalMoves;
     };
 
+    getCompositionByCell = cell => {
+        const stack = this.state[cell];
+        const whiteCount = stack.match(STACK_WHITE).length;
+        const blackCount = stack.match(STACK_BLACK).length;
+        const dvonnCount = stack.match(STACK_DVONN).length;
+
+        return {
+            whiteCount,
+            blackCount,
+            dvonnCount
+        };
+    };
+
+    getLocalityByCell = cell => {
+        /*
+              NW  NE
+            W       E
+              SW SE
+        */
+
+        const column = cell[0];
+        const row = cell[1];
+
+        const columnIndex = COLUMNS.indexOf(column);
+
+        const adjacentCells: any = [
+            this.state[column + (parseInt(row, 10) - 1)], // SE
+            this.state[COLUMNS[columnIndex - 1] + (parseInt(row, 10) - 1)], // SW
+            this.state[COLUMNS[columnIndex - 1] + row], // W
+            this.state[column + (parseInt(row, 10) + 1)],   // NW
+            this.state[COLUMNS[columnIndex + 1] + (parseInt(row, 10) + 1)], // NE
+            this.state[COLUMNS[columnIndex + 1] + row]  // E
+        ]
+            .filter(Boolean)
+            .map(getLastChar)
+            .join('');
+
+        const whiteCount = adjacentCells.match(STACK_WHITE).length;
+        const blackCount = adjacentCells.match(STACK_BLACK).length;
+
+        if(this.color === 'w') {
+            return whiteCount / 7;
+        } else {
+            return blackCount / 7;
+        }
+    };
+
     // D = DVONN ring
     // W = white ring
     // B = black ring
@@ -103,7 +157,7 @@ export default class Board {
     toString = (s = this.state, cell?) => {
         const displayState = JSON.parse(JSON.stringify(s));
 
-        const moves = cell? this.getPossibleMovesForCell(cell).map(m => m.name).concat(cell) : null;
+        const moves = cell ? this.getPossibleMovesForCell(cell).map(m => m.name).concat(cell) : null;
 
         Object.keys(s).forEach(name => {
             let displayName = name;
