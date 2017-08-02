@@ -10,14 +10,22 @@ A bot that beats Dumbot.
 ### Architecture
 
 ```
-1. Automator (OS interface with Boardspace.net applet)
-2. Referree (manages game state and movement rules)
-  - should be able to parse SGF file
-  - SGFParser
-    - step forward, step back through frames
-3. Scout (analyzes game state and outputs statistics for game space given its state and player)
-4. Field marshal (tactical decisions)
-5. Commander (strategic decisions)
+1. BoardSpaceInterface 
+  - controls human player; assumes BoardSpace client 
+    is open and DVONN game has commenced
+
+2. Board
+  - manages board state
+  - calculates tile values, legal moves
+  - maintains history
+
+3. SGFParser
+  - step forward, step back through frames
+  - outputs a human readable string describing the move
+
+4. TacticsLayer
+5. StrategicLayer
+
 ```
 
 ## General Tactics
