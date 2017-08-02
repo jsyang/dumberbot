@@ -29,11 +29,8 @@ interface IRelativeCell {
     name: string;
 }
 
-// Will eventually reference http://www.red-bean.com/sgf/user_guide/index.html
-
 const STACK_WHITE = /w/g;
 const STACK_BLACK = /b/g;
-const STACK_DVONN = /d/g;
 
 const getLastChar = s => s[s.length - 1];
 const pad2 = s => {
@@ -110,18 +107,41 @@ export default class Board {
         return legalMoves;
     };
 
-    getCompositionByCell = cell => {
+    getCompositionByCell = (cell, color) => {
         const stack = this.state[cell];
-        const whiteCount = stack.match(STACK_WHITE).length;
-        const blackCount = stack.match(STACK_BLACK).length;
-        const dvonnCount = stack.match(STACK_DVONN).length;
+        const whiteCount = (stack.match(STACK_WHITE) || []).length;
+        const blackCount = (stack.match(STACK_BLACK) || []).length;
+        const totalCount = stack.length;
 
-        return {
-            whiteCount,
-            blackCount,
-            dvonnCount
-        };
+        if (totalCount === 0) {
+            return 0;
+        } else {
+            if (color === 'w') {
+                return whiteCount / totalCount;
+            } else {
+                return blackCount / totalCount;
+            }
+        }
     };
+
+    getAdjacentCells = cell => {
+        const column = cell[0];
+        const row = cell[1];
+
+        const columnIndex = COLUMNS.indexOf(column);
+
+        const cells = [
+            column + (parseInt(row, 10) - 1), // SE
+            COLUMNS[columnIndex - 1] + (parseInt(row, 10) - 1), // SW
+            COLUMNS[columnIndex - 1] + row, // W
+            column + (parseInt(row, 10) + 1),   // NW
+            COLUMNS[columnIndex + 1] + (parseInt(row, 10) + 1), // NE
+            COLUMNS[columnIndex + 1] + row  // E
+        ]
+            .filter(c => Boolean(this.state[c]));
+
+        return cells;
+    }
 
     getLocalityByCell = cell => {
         /*
@@ -130,25 +150,13 @@ export default class Board {
               SW SE
         */
 
-        const column = cell[0];
-        const row = cell[1];
-
-        const columnIndex = COLUMNS.indexOf(column);
-
-        const adjacentCells: any = [
-            this.state[column + (parseInt(row, 10) - 1)], // SE
-            this.state[COLUMNS[columnIndex - 1] + (parseInt(row, 10) - 1)], // SW
-            this.state[COLUMNS[columnIndex - 1] + row], // W
-            this.state[column + (parseInt(row, 10) + 1)],   // NW
-            this.state[COLUMNS[columnIndex + 1] + (parseInt(row, 10) + 1)], // NE
-            this.state[COLUMNS[columnIndex + 1] + row]  // E
-        ]
-            .filter(Boolean)
+        const adjacent = this.getAdjacentCells(cell)
+            .map(c => this.state[c])
             .map(getLastChar)
             .join('');
 
-        const whiteCount = adjacentCells.match(STACK_WHITE).length;
-        const blackCount = adjacentCells.match(STACK_BLACK).length;
+        const whiteCount = (adjacent.match(STACK_WHITE) || []).length;
+        const blackCount = (adjacent.match(STACK_BLACK) || []).length;
 
         if (this.color === 'w') {
             return whiteCount / 7;
@@ -172,7 +180,46 @@ export default class Board {
         this.state[toCell] += stack;
     };
 
-    toString = () => {
+    // Recursively add connected cells
+    addAdjacentCellsToConnected = (connected, cell) => {
+        this.getAdjacentCells(cell).forEach(adjacentCell => {
+            if (!(adjacentCell in connected)) {
+                connected[adjacentCell] = true;
+                this.addAdjacentCellsToConnected(connected, adjacentCell);
+            }
+        });
+    };
+
+    pruneDeadCells = () => {
+        const { state } = this;
+
+        const positionsDVONN = {};
+
+        Object.keys(state).forEach(cell => {
+            const hasDVONNRing = state[cell].indexOf('d') !== -1;
+            if (hasDVONNRing) {
+                positionsDVONN[cell] = true;
+            }
+        });
+
+
+        Object.keys(positionsDVONN)
+            .forEach(cell => this.addAdjacentCellsToConnected(positionsDVONN, cell));
+
+
+        let pruneCount = 0;
+
+        Object.keys(state).forEach(cell => {
+            if(!(cell in positionsDVONN)){
+                state[cell] = '';
+                pruneCount++;
+            }
+        });
+
+        console.log(`Pruned ${pruneCount} cell(s).`);
+    };
+
+    showBoardStacksAndOwnership = () => {
         const { state } = this;
         const displayState = JSON.parse(JSON.stringify(state));
 
@@ -188,13 +235,57 @@ export default class Board {
                 displayState[cell] = displayState[cell].dim.yellow;
             }
 
-            if(state[cell].length === 0) {
+            if (state[cell].length === 0) {
                 displayState[cell] = '__'.black.bgBlue;
             } else if (state[cell].indexOf('d') !== -1) {
                 displayState[cell] = displayState[cell].bgRed;
             }
-            
+
         });
+
+        return displayState;
+    };
+
+    showBoardComposition = color => {
+        // ).toFixed(2).split('.')[1]
+        const { state } = this;
+        const displayState = JSON.parse(JSON.stringify(state));
+
+        Object.keys(state).forEach(cell => {
+            let composition: any = this.getCompositionByCell(cell, color);
+
+            if (composition === 1) {
+                composition = '99';
+            } else {
+                composition = composition.toFixed(2).split('.')[1];
+            }
+
+            displayState[cell] = composition;
+
+            const owner = getLastChar(state[cell]);
+
+            if (owner === 'w') {
+                displayState[cell] = displayState[cell].white;
+            } else if (owner === 'b') {
+                displayState[cell] = displayState[cell].dim.gray;
+            } else if (owner === 'd') {
+                displayState[cell] = displayState[cell].dim.yellow;
+            }
+
+            if (state[cell].length === 0) {
+                displayState[cell] = '__'.black.bgBlue;
+            } else if (state[cell].indexOf('d') !== -1) {
+                displayState[cell] = displayState[cell].bgRed;
+            }
+
+        });
+
+        return displayState;
+    };
+
+    toString = (relativeToColor) => {
+        console.log('Showing composition values for each position:');
+        const displayState = this.showBoardComposition(relativeToColor);
 
         // @formatter:off
         const {

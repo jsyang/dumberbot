@@ -28,25 +28,27 @@ let currentMoveIndex = 0;
 
 function processCurrentMove() {
     const move = p.curr();
-    currentPlayer = move.player === 'P0'? 'w' : 'b';
+    if (move) {
+        currentPlayer = move.player === 'P0' ? 'w' : 'b';
 
-    if(move.type === 'move') {
-        b.moveStack(currentPlayer, move.fromCell, move.toCell);
-    } else if (move.type ==='pickb') {
-        currentStack = b.pickStack(move.toCell);
-    } else if (move.type ==='dropb') {
-        // Initial set up of rings
-        if(currentMoveIndex < 6) {
-            currentStack = 'd';
-        } else if(currentStack.length === 0) {
-            currentStack = currentPlayer;
+        if (move.type === 'move') {
+            b.moveStack(currentPlayer, move.fromCell, move.toCell);
+        } else if (move.type === 'pickb') {
+            currentStack = b.pickStack(move.toCell);
+        } else if (move.type === 'dropb') {
+            // Initial set up of rings
+            if (currentMoveIndex < 6) {
+                currentStack = 'd';
+            } else if (currentStack.length === 0) {
+                currentStack = currentPlayer;
+            }
+
+            b.dropStack(currentStack, move.toCell);
+            currentStack = '';
         }
 
-        b.dropStack(currentStack, move.toCell);
-        currentStack = '';
+        currentMoveIndex++;
     }
-
-    currentMoveIndex++;
 }
 
 process.stdin.on('keypress', function (ch, key) {
@@ -64,8 +66,14 @@ process.stdin.on('keypress', function (ch, key) {
 
         processCurrentMove();
 
+        console.log(`Frame ${p.curr().frameNumber}:`);
         console.log(p.toHumanString());
-        console.log(b.toString());
+
+        if (currentMoveIndex > 98) {
+            b.pruneDeadCells();
+        }
+
+        console.log(b.toString(currentPlayer));
     }
 });
 

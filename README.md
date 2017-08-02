@@ -24,8 +24,7 @@ A bot that beats Dumbot.
 
 ### Next-move metrics
 
-**Composition** is the ratio of enemy rings vs own rings in a stack. A higher composition is favored
- as the target of the next move.
+**Composition** is the percentage of rings in a stack that belongs to a color. A lower composition is favored as the target of the next move.
  
 **Disposition** is the number of defenders of a stack. Enemy disposition is the number of available 
 stacks the enemy has to cover a position, vs own disposition which is the number of stacks you have
