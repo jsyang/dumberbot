@@ -43,7 +43,7 @@ const pad2 = s => {
 
 export default class Board {
     state = createState();
-    color = 'w';
+    history: string[] = [];
 
     getDiagonalsForCell = name => {
         const column = name[0];
@@ -143,7 +143,7 @@ export default class Board {
         return cells;
     }
 
-    getLocalityByCell = cell => {
+    getLocalityByCell = (cell, color) => {
         /*
               NW  NE
             W       E
@@ -158,7 +158,7 @@ export default class Board {
         const whiteCount = (adjacent.match(STACK_WHITE) || []).length;
         const blackCount = (adjacent.match(STACK_BLACK) || []).length;
 
-        if (this.color === 'w') {
+        if (color === 'w') {
             return whiteCount / 7;
         } else {
             return blackCount / 7;
@@ -168,17 +168,28 @@ export default class Board {
     moveStack = (color, fromCell, toCell) => {
         this.state[toCell] += this.state[fromCell];
         this.state[fromCell] = '';
+        this.pushHistory();
     };
 
     pickStack = (fromCell) => {
         const stack = this.state[fromCell];
         this.state[fromCell] = ''
+        this.pushHistory();
         return stack;
     };
 
     dropStack = (stack, toCell) => {
         this.state[toCell] += stack;
+        this.pushHistory();
     };
+
+    pushHistory = () => this.history.push(JSON.stringify(this.state));
+    undo = () => {        
+        const lastState = this.history.pop();
+        if(lastState) {
+            this.state = JSON.parse(lastState);
+        }
+    }
 
     // Recursively add connected cells
     addAdjacentCellsToConnected = (connected, cell) => {
@@ -210,7 +221,7 @@ export default class Board {
         let pruneCount = 0;
 
         Object.keys(state).forEach(cell => {
-            if(!(cell in positionsDVONN)){
+            if (!(cell in positionsDVONN)) {
                 state[cell] = '';
                 pruneCount++;
             }
@@ -247,7 +258,8 @@ export default class Board {
     };
 
     showBoardComposition = color => {
-        // ).toFixed(2).split('.')[1]
+        console.log('Showing composition values for each position:');
+
         const { state } = this;
         const displayState = JSON.parse(JSON.stringify(state));
 
@@ -283,9 +295,48 @@ export default class Board {
         return displayState;
     };
 
+    showBoardLocality = color => {
+        console.log('Showing locality values for each position:');
+
+        const { state } = this;
+        const displayState = JSON.parse(JSON.stringify(state));
+
+        Object.keys(state).forEach(cell => {
+            let locality: any = this.getLocalityByCell(cell, color);
+
+            if (locality === 1) {
+                locality = '99';
+            } else {
+                locality = locality.toFixed(2).split('.')[1];
+            }
+
+            displayState[cell] = locality;
+
+            const owner = getLastChar(state[cell]);
+
+            if (owner === 'w') {
+                displayState[cell] = displayState[cell].white;
+            } else if (owner === 'b') {
+                displayState[cell] = displayState[cell].dim.gray;
+            } else if (owner === 'd') {
+                displayState[cell] = displayState[cell].dim.yellow;
+            }
+
+            if (state[cell].length === 0) {
+                displayState[cell] = '__'.black.bgBlue;
+            } else if (state[cell].indexOf('d') !== -1) {
+                displayState[cell] = displayState[cell].bgRed;
+            }
+
+        });
+
+        return displayState;
+    };
+
+
     toString = (relativeToColor) => {
-        console.log('Showing composition values for each position:');
-        const displayState = this.showBoardComposition(relativeToColor);
+
+        const displayState = this.showBoardLocality(relativeToColor);
 
         // @formatter:off
         const {

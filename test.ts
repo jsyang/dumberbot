@@ -51,22 +51,27 @@ function processCurrentMove() {
     }
 }
 
+processCurrentMove();
+
 process.stdin.on('keypress', function (ch, key) {
     if (key) {
         clear();
         if (key.name === 'right') {
             p.next();
+            processCurrentMove();
         } else if (key.name === 'left') {
-            p.prev();
+            if(currentMoveIndex>0){
+                p.prev();
+                b.undo();
+                currentMoveIndex--;
+            }
         } else if (key.name === 'up') {
             //console.log(p.curr());
         } else if (key.ctrl && key.name == 'c') {
             process.stdin.pause();
         }
 
-        processCurrentMove();
-
-        console.log(`Frame ${p.curr().frameNumber}:`);
+        console.log(`Frame ${currentMoveIndex}:`);
         console.log(p.toHumanString());
 
         if (currentMoveIndex > 98) {

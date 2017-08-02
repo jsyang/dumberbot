@@ -34,6 +34,20 @@ that can move on top of the position of interest.
 
 ### Strategies
 
-1. Early-game
-2. Mid-game
-3. End-game
+An average game lasts about 90 - 100 moves. (Scrape game archives for statistics)
+
+1. Early-game (1 move look ahead)
+  - Rings should be placed to maximize uniformity of spread.
+    Concentration is bad.
+  - Rings should be placed near the control rings.
+    Being far away from control rings is bad.
+  - Move stacks with low locality first, aim to maximize locality in preparation for positional plays mid-game.
+  - Secondarily, move stacks with the aim of minimizing composition across the board.
+
+2. Mid-game (4 move look ahead)
+  - Maximize locality of all positions to avoid being cut off.
+  - Minimize disposition of enemy positions.
+
+3. End-game (maximum look ahead)
+  - Move stacks to minimize enemy disposition.
+

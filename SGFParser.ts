@@ -13,7 +13,7 @@ const getMoveFromSGFLine = l => {
     const frame = l.split('[')[1].replace(']', '').split(' ');
     const type = frame[1];
 
-    const move:IMove = {
+    const move: IMove = {
         player: l.substr(1, 2),
         frameNumber: parseFloat(frame[0]),
         type
@@ -22,7 +22,7 @@ const getMoveFromSGFLine = l => {
     if (type !== 'done') {
         move.fromCell = type === 'move' ? frame[2] + frame[3] : null;
         move.toCell = type === 'move' ? frame[4] + frame[5] : frame[2] + frame[3];
-        
+
     }
 
     return move;
@@ -50,14 +50,16 @@ export default class SGFParser {
 
     toHumanString = () => {
         const move = this.moves[this.index];
-        const name = move.player === 'P0' ? this.nameWhitePlayer : this.nameBlackPlayer;
+        if (move) {
+            const name = move.player === 'P0' ? this.nameWhitePlayer : this.nameBlackPlayer;
 
-        if(move.type === 'done') {
-            return `${name} is done this turn.`;
-        } else if (move.type === 'move') {
-            return `${name} moves ${move.fromCell} to ${move.toCell}.`;
-        } else {
-            return `${name} ${move.type.replace('b','s')} stack at ${move.toCell}.`;
+            if (move.type === 'done') {
+                return `${name} is done this turn.`;
+            } else if (move.type === 'move') {
+                return `${name} moves ${move.fromCell} to ${move.toCell}.`;
+            } else {
+                return `${name} ${move.type.replace('b', 's')} stack at ${move.toCell}.`;
+            }
         }
     };
 
