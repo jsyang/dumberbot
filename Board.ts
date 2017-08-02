@@ -36,6 +36,13 @@ const STACK_BLACK = /b/g;
 const STACK_DVONN = /d/g;
 
 const getLastChar = s => s[s.length - 1];
+const pad2 = s => {
+    if (s.length > 0) {
+        return s.length < 2 ? '_' + s : s;
+    } else {
+        return '__';
+    }
+};
 
 export default class Board {
     state = createState();
@@ -143,32 +150,50 @@ export default class Board {
         const whiteCount = adjacentCells.match(STACK_WHITE).length;
         const blackCount = adjacentCells.match(STACK_BLACK).length;
 
-        if(this.color === 'w') {
+        if (this.color === 'w') {
             return whiteCount / 7;
         } else {
             return blackCount / 7;
         }
     };
 
-    // D = DVONN ring
-    // W = white ring
-    // B = black ring
+    moveStack = (color, fromCell, toCell) => {
+        this.state[toCell] += this.state[fromCell];
+        this.state[fromCell] = '';
+    };
 
-    toString = (s = this.state, cell?) => {
-        const displayState = JSON.parse(JSON.stringify(s));
+    pickStack = (fromCell) => {
+        const stack = this.state[fromCell];
+        this.state[fromCell] = ''
+        return stack;
+    };
 
-        const moves = cell ? this.getPossibleMovesForCell(cell).map(m => m.name).concat(cell) : null;
+    dropStack = (stack, toCell) => {
+        this.state[toCell] += stack;
+    };
 
-        Object.keys(s).forEach(name => {
-            let displayName = name;
+    toString = () => {
+        const { state } = this;
+        const displayState = JSON.parse(JSON.stringify(state));
 
-            if (moves && moves.indexOf(name) !== -1) {
-                displayName = displayName.red;
-            } else {
-                displayName = displayName.dim.gray;
+        Object.keys(state).forEach(cell => {
+            displayState[cell] = pad2(state[cell].length.toString());
+            const owner = getLastChar(state[cell]);
+
+            if (owner === 'w') {
+                displayState[cell] = displayState[cell].white;
+            } else if (owner === 'b') {
+                displayState[cell] = displayState[cell].dim.gray;
+            } else if (owner === 'd') {
+                displayState[cell] = displayState[cell].dim.yellow;
             }
 
-            displayState[name] = displayName;
+            if(state[cell].length === 0) {
+                displayState[cell] = '__'.black.bgBlue;
+            } else if (state[cell].indexOf('d') !== -1) {
+                displayState[cell] = displayState[cell].bgRed;
+            }
+            
         });
 
         // @formatter:off

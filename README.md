@@ -1,7 +1,11 @@
 # dumberbot
-a bot vs Dumbot
-
+A bot that beats Dumbot.
 ---
+
+## Quick start
+
+### 1. Start the bot with BoardSpace DVONN game client opened: `yarn start` 
+### 2. Run the test script: `./test.ts`
 
 ### Architecture
 
@@ -9,6 +13,8 @@ a bot vs Dumbot
 1. Automator (OS interface with Boardspace.net applet)
 2. Referree (manages game state and movement rules)
   - should be able to parse SGF file
+  - SGFParser
+    - step forward, step back through frames
 3. Scout (analyzes game state and outputs statistics for game space given its state and player)
 4. Field marshal (tactical decisions)
 5. Commander (strategic decisions)
