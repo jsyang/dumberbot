@@ -1,5 +1,11 @@
 # dumberbot
 A bot that beats Dumbot.
+
+## Todo
+- Detect whose turn it is
+- Handle Placement phase
+
+
 ---
 
 ## Quick start
@@ -13,6 +19,10 @@ A bot that beats Dumbot.
 1. BoardSpaceInterface 
   - controls human player; assumes BoardSpace client 
     is open and DVONN game has commenced
+  - should know whose turn it is 
+  - should be able to query the game state
+  - should be able to make moves
+  - should be able to determine when a game has ended
 
 2. Board
   - manages board state
