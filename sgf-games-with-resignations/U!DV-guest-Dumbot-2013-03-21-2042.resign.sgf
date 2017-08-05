@@ -1,0 +1,17 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn -176798581]
+DT[Thu Mar 21 21:42:34 CET 2013]
+GN[]
+P0[id "guest"]
+P0[ranking 1500]
+P1[id "Dumbot"]
+; P0[0 Start P0]
+; P0[1 dropb D 1]
+; P0[2 resign]
+; P0[3 done]
+;
+P0[time 0:00:13 ]
+P1[time 0:00:00 ]
+)
+ 

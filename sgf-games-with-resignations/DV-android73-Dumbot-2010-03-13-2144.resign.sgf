@@ -1,0 +1,24 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn -848945602]
+DT[Sat Mar 13 15:44:12 CST 2010]
+GN[]
+P0[id "android73"]
+P1[id "Dumbot"]
+; P0[0 Start P0]
+; P0[1 pick wr 2]
+; P0[2 dropb E 4]
+; P0[3 done]
+; P1[4 dropb A 3]
+; P1[5 done]
+; P0[6 dropb H 2]
+; P0[7 done]
+; P1[8 dropb K 3]
+; P1[9 done]
+; P0[10 resign]
+; P0[11 done]
+;
+P0[time 0:01:25 ]
+P1[time 0:00:02 ]
+)
+ 

@@ -34,7 +34,6 @@ const findGamePlayWindowReferenceCoord = () => {
     }
 }
 
-
 const clickAtOffset = offset => {
     const endCoord = getAbsoluteCoord(offset);
     robot.moveMouse(endCoord.x, endCoord.y);

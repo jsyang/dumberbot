@@ -29,13 +29,15 @@ const getMoveFromSGFLine = l => {
 };
 
 export default class SGFParser {
+    hasResignation: boolean;
     moves: IMove[];
 
     nameWhitePlayer: string;
     nameBlackPlayer: string;
 
     constructor(filePath: string) {
-        const lines = fs.readFileSync(filePath, 'utf8').split('\n');
+        const raw = fs.readFileSync(filePath, 'utf8');
+        const lines = raw.split('\n');
 
         this.nameWhitePlayer = lines[6].split('id ')[1].replace(']', '').white;
         this.nameBlackPlayer = lines[7].split('id ')[1].replace(']', '').gray;
@@ -44,6 +46,8 @@ export default class SGFParser {
             .filter(l => l[0] === ';')
             .slice(1) // Skip "Start" frame
             .map(getMoveFromSGFLine);
+
+        this.hasResignation = raw.indexOf('resign]') !== -1;
     }
 
     index = 0;

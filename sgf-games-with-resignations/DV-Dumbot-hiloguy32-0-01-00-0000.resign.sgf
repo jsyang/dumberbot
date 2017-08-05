@@ -1,0 +1,24 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn 1569932104]
+DT[April 5, 2016]
+GN[DV-Dumbot-hiloguy32-0-01-00-0000]
+RE[Game won by Dumbot]
+P0[id "Dumbot"]
+P1[id "hiloguy32"]
+; P0[0 Start P0]
+; P0[1 dropb H 4]
+; P0[2 done]
+; P1[3 dropb C 3]
+; P1[4 pickb C 3]
+; P1[5 dropb F 2]
+; P1[6 done]
+; P0[7 dropb I 1]
+; P0[8 done]
+; P1[9 resign]
+; P1[10 done]
+;
+P0[time 0:02:02 ]
+P1[time 0:00:10 ]
+)
+ 

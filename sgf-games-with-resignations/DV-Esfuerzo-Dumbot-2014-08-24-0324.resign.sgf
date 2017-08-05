@@ -1,0 +1,19 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn 834319798]
+DT[Sat Aug 23 23:24:27 EDT 2014]
+GN[]
+RE[Game won by Dumbot]
+P0[id "Esfuerzo"]
+P0[ranking 1502]
+P1[id "Dumbot"]
+; P0[0 Start P0]
+; P0[1 pick wr 2]
+; P0[2 dropb G 5]
+; P0[3 resign]
+; P0[4 done]
+;
+P0[time 0:00:05 ]
+P1[time 0:00:00 ]
+)
+ 

@@ -1,0 +1,17 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn 924941480]
+DT[Fri Apr 10 11:03:36 EDT 2015]
+GN[DV-shogi-Dumbot-2015-04-10-1503]
+RE[Game won by Dumbot]
+P0[id "shogi"]
+P0[ranking 1471]
+P1[id "Dumbot"]
+; P0[0 Start P0]
+; P0[1 resign]
+; P0[2 done]
+;
+P0[time 0:00:01 ]
+P1[time 0:00:00 ]
+)
+ 

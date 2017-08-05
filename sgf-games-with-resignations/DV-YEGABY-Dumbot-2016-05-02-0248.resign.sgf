@@ -1,0 +1,16 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn -2051956785]
+DT[Sun May 01 21:48:40 COT 2016]
+GN[DV-YEGABY-Dumbot-2016-05-02-0248]
+RE[Partida ganada por Dumbot]
+P0[id "YEGABY"]
+P1[id "Dumbot"]
+; P0[0 Start P0]
+; P0[1 resign]
+; P0[2 done]
+;
+P0[time 0:00:00 ]
+P1[time 0:00:00 ]
+)
+ 

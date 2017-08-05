@@ -1,0 +1,22 @@
+ (;
+GM[Dvonn]VV[1]
+DT[Sun Jan 11 17:35:09 CET 2009]
+GN[bartje-Keitsch]
+SU[dvonn 90881208]
+P0[id "bartje"]
+P1[id "Keitsch"]
+; P0[0 Start P0]
+; P0[1 dropb C 2]
+; P0[2 done]
+; P1[3 pick br 2]
+; P1[4 dropb G 2]
+; P1[5 done]
+; P0[6 dropb F 4]
+; P0[7 done]
+; P1[8 resign]
+; P1[9 done]
+;
+P0[time 0:00:28 ]
+P1[time 0:00:56 ]
+)
+ 

@@ -1,0 +1,26 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn 645589633]
+DT[Sun Apr 24 23:31:58 JST 2011]
+GN[]
+P0[id "guest"]
+P0[ranking 1500]
+P1[id "Dumbot"]
+; P0[0 Start P0]
+; P0[1 pick wr 2]
+; P0[2 dropb J 2]
+; P0[3 done]
+; P1[4 dropb E 5]
+; P1[5 done]
+; P0[6 pick wr 2]
+; P0[7 dropb I 2]
+; P0[8 done]
+; P1[9 dropb C 4]
+; P1[10 done]
+; P0[11 resign]
+; P0[12 done]
+;
+P0[time 0:01:23 ]
+P1[time 0:00:04 ]
+)
+ 

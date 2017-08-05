@@ -1,0 +1,19 @@
+ (;
+GM[Dvonn]VV[1]
+SU[dvonn 2029410659]
+DT[Sat Feb 11 01:44:41 EST 2017]
+GN[DV-Dumbot-piens-2017-02-11-0644]
+RE[Game won by Dumbot]
+P0[id "Dumbot"]
+P1[id "piens"]
+P1[ranking 1402]
+; P0[0 Start P0]
+; P0[1 dropb G 2]
+; P0[2 done]
+; P1[3 resign]
+; P1[4 done]
+;
+P0[time 0:00:00 ]
+P1[time 0:00:34 ]
+)
+ 
