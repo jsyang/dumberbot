@@ -1,5 +1,7 @@
 // Assumes your screen resolution is 1440 x 
 
+const CLOSE_GAME_TEXT_WINDOW = { x: 17, y: 30 };
+
 const MENU_ACTIONS = { dx: 90, dy: 20 };
 const MENU_ACTIONS_SHOW_SGF_OUTPUT = { dx: 90, dy: 134 };
 
@@ -70,7 +72,7 @@ const K5 = { dx: 679, dy: 516 };
 
 const ABSOLUTE_OFFSETS = {
     DONE_BUTTON,
-    
+
     A1, A2, A3,
     B1, B2, B3, B4,
     C1, C2, C3, C4, C5,
@@ -89,11 +91,28 @@ Object.keys(ABSOLUTE_OFFSETS).forEach(k => {
     ABSOLUTE_OFFSETS[k].dy -= 30;
 });
 
+const LIST_OF_POSITIONS = `
+    A1, A2, A3,
+    B1, B2, B3, B4,
+    C1, C2, C3, C4, C5,
+    D1, D2, D3, D4, D5,
+    E1, E2, E3, E4, E5,
+    F1, F2, F3, F4, F5,
+    G1, G2, G3, G4, G5,
+    H1, H2, H3, H4, H5,
+    I1, I2, I3, I4, I5,
+    J2, J3, J4, J5,
+    K3, K4, K5
+`.split(',').map(v => v.trim())
+
 export default {
+    CLOSE_GAME_TEXT_WINDOW,
     MENU_ACTIONS,
     MENU_ACTIONS_SHOW_SGF_OUTPUT,
     PLAYER_0_IS_ACTIVE,
     PLAYER_1_IS_ACTIVE,
 
-    ...ABSOLUTE_OFFSETS
+    ...ABSOLUTE_OFFSETS,
+
+    LIST_OF_POSITIONS
 }

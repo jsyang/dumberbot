@@ -1,8 +1,10 @@
 # dumberbot
-A bot that beats Dumbot.
+A bot that beats Dumbot. This is currently only meant to work on a MacBook Air (mid-2013) with its built in display (non-retina) on OSX El Capitan.
+
+![1](board-screenshot.png)
 
 ## Todo
-- Detect whose turn it is
+- Know how to make a legal move
 - Handle Placement phase
 
 
@@ -10,7 +12,7 @@ A bot that beats Dumbot.
 
 ## Quick start
 
-### 1. Start the bot with BoardSpace DVONN game client opened: `yarn start` 
+### 1. Start the bot with BoardSpace DVONN game client opened: `./index.ts` or `yarn start` 
 ### 2. Run the test script: `./test.ts`
 
 ### Architecture
@@ -22,7 +24,7 @@ A bot that beats Dumbot.
   - should know whose turn it is 
   - should be able to query the game state
   - should be able to make moves
-  - should be able to determine when a game has ended
+  - should be able to determine when a game has ended (---)
 
 2. Board
   - manages board state
