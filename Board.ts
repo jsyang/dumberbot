@@ -42,6 +42,12 @@ const pad2 = s => {
 };
 
 export default class Board {
+    analysisFunc: Function;
+
+    constructor(state = createState(), playerColor = 'w') {
+        this.analysisFunc = this.showBoardLocality;
+    }
+
     state = createState();
     history: string[] = [];
 
@@ -49,7 +55,7 @@ export default class Board {
         const column = name[0];
         const row = name[1];
 
-        const diagonalCells: any = [];
+        let diagonalCells: any = [];
 
         const currentRowIndex = ROWS.indexOf(row);
         const currentColumnIndex = COLUMNS.indexOf(column);
@@ -79,7 +85,7 @@ export default class Board {
         const row = name[1];
 
         // Diagonal moves
-        const legalMoves: any = this.getDiagonalsForCell(name);
+        const possibleMoves: any = this.getDiagonalsForCell(name);
 
         const currentRowIndex = ROWS.indexOf(row);
         const currentColumnIndex = COLUMNS.indexOf(column);
@@ -87,7 +93,7 @@ export default class Board {
         // Same-row moves
         for (let i = 0; i < COLUMNS.length; i++) {
             if (i !== currentColumnIndex) {
-                legalMoves.push({
+                possibleMoves.push({
                     dist: Math.abs(currentColumnIndex - i),
                     name: `${COLUMNS[i]}${row}`
                 })
@@ -97,14 +103,29 @@ export default class Board {
         // Same-column moves
         for (let i = 0; i < ROWS.length; i++) {
             if (i !== currentRowIndex) {
-                legalMoves.push({
+                possibleMoves.push({
                     dist: Math.abs(currentRowIndex - i),
                     name: `${column}${ROWS[i]}`
                 })
             }
         }
 
-        return legalMoves;
+        return possibleMoves;
+    };
+
+    getLegalMovesForCell = (cell: string): IRelativeCell[] => {
+        // Is completely surrounded?
+        if (this.getAdjacentCells(cell).length === 6) {
+            return [];
+        } else {
+            const stackHeight = this.state[cell].length;
+
+            return this.getPossibleMovesForCell(cell)
+                .filter(c => c.dist === stackHeight)
+                .filter(c => 
+                    this.state[c.name] && this.state[c.name].length > 0
+                );
+        }
     };
 
     getCompositionByCell = (cell, color) => {
@@ -159,9 +180,17 @@ export default class Board {
         const blackCount = (adjacent.match(STACK_BLACK) || []).length;
 
         if (color === 'w') {
-            return whiteCount / 7;
+            return {
+                friendly: whiteCount / 7,
+                hostile: blackCount / 7,
+                total: adjacent.trim().length
+            };
         } else {
-            return blackCount / 7;
+            return {
+                friendly: blackCount / 7,
+                hostile: whiteCount / 7,
+                total: adjacent.trim().length
+            };
         }
     };
 
@@ -184,9 +213,9 @@ export default class Board {
     };
 
     pushHistory = () => this.history.push(JSON.stringify(this.state));
-    undo = () => {        
+    undo = () => {
         const lastState = this.history.pop();
-        if(lastState) {
+        if (lastState) {
             this.state = JSON.parse(lastState);
         }
     }
@@ -226,11 +255,10 @@ export default class Board {
                 pruneCount++;
             }
         });
-
-        console.log(`Pruned ${pruneCount} cell(s).`);
     };
 
     showBoardStacksAndOwnership = () => {
+        console.log(`Showing stacks and ownership:`);        
         const { state } = this;
         const displayState = JSON.parse(JSON.stringify(state));
 
@@ -302,7 +330,7 @@ export default class Board {
         const displayState = JSON.parse(JSON.stringify(state));
 
         Object.keys(state).forEach(cell => {
-            let locality: any = this.getLocalityByCell(cell, color);
+            let locality: any = this.getLocalityByCell(cell, color).friendly;
 
             if (locality === 1) {
                 locality = '99';
@@ -333,10 +361,28 @@ export default class Board {
         return displayState;
     };
 
+    showLegalMoves = (cell: string) => {
+        console.log(`Showing possible moves for ${cell}:`);
+        const { state } = this;
+        const displayState = JSON.parse(JSON.stringify(state));
+        const possibleMoves = this.getLegalMovesForCell(cell)
+            .map(m => m.name);
 
-    toString = (relativeToColor) => {
+        Object.keys(state).forEach(c => {
+            displayState[c] = c === cell ? '██' : '░░';
 
-        const displayState = this.showBoardLocality(relativeToColor);
+            if (possibleMoves.indexOf(c) !== -1) {
+                displayState[c] = displayState[c].gray.bgYellow;
+            } else {
+                displayState[c] = displayState[c].gray.bgBlue;
+            }
+        });
+
+        return displayState;
+    };
+
+    toString = (param) => {
+        const displayState = this.analysisFunc(param);
 
         // @formatter:off
         const {

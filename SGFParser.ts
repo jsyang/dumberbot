@@ -50,7 +50,7 @@ export default class SGFParser {
         this.hasResignation = raw.indexOf('resign]') !== -1;
     }
 
-    index = 0;
+    index = -1;
 
     toHumanString = () => {
         const move = this.moves[this.index];
