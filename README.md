@@ -4,9 +4,23 @@ A bot that beats Dumbot. This is currently only meant to work on a MacBook Air (
 ![1](board-screenshot.png)
 
 ## Todo
-- Know how to make a legal move
 - Handle Placement phase
+  - Count placed tokens
+  - Enable board pruning after placement phase is over
+  - Locality: tendency to occupy positions that have low locality (disperse own rings evenly)
 
+- Implement basic strategy using disposition, locality, and composition
+  - Compute defensive values for every cell on the board
+  - Compute offensive values for every cell on the board
+  - Decide whether to make a defensive move or an offensive move
+
+  - Disposition: use this to determine the offensive value of a move (weight: 2)
+    - tendency to attack into a position of low disposition
+  - Enemy composition: use this to determine the offensive value of a move (weight: 1)
+    - tendency to attack into a position where there is a high composition of enemy rings
+  - Own locality: use this to determine the defensive value of a move (weight: 1)
+    - tendency to move from areas of low locality
+    - tendency to move into areas of high locality
 
 ---
 

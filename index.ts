@@ -10,6 +10,7 @@ const {
     clickAtOffset,
 } = robotActions;
 
+
 const actions: any = [
 
 
