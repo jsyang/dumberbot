@@ -68,6 +68,21 @@ export default class SGFParser {
     };
 
     curr = () => this.moves[this.index];
-    next = () => this.moves[++this.index];
-    prev = () => this.moves[--this.index];
+    
+    next = () => {
+        const move = this.moves[this.index + 1];
+        
+        // Don't advance the counter if no more moves in the log
+        if(move) {
+            this.index++;
+            return move;
+        }
+    };
+    
+    prev = () => {
+        this.index--;
+        // Can only back track before the first move
+        this.index = Math.max(this.index, -1);
+        return this.moves[this.index];
+    }
 }

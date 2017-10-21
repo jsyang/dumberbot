@@ -44,13 +44,10 @@ const pad2 = s => {
 export default class Board {
     analysisFunc: Function;
 
-    constructor(state = createState(), playerColor = 'w') {
-        this.analysisFunc = this.showBoardLocality;
-    }
-
-    state = createState();
+    playerColor = 'w';
+    state: any = createState();
     history: string[] = [];
-
+    
     getDiagonalsForCell = name => {
         const column = name[0];
         const row = name[1];
@@ -213,12 +210,17 @@ export default class Board {
     };
 
     pushHistory = () => this.history.push(JSON.stringify(this.state));
+
     undo = () => {
-        const lastState = this.history.pop();
+        this.history.pop();
+        const lastState = this.history[this.history.length -1];
+
         if (lastState) {
             this.state = JSON.parse(lastState);
+        } else {
+            this.state = createState();
         }
-    }
+    };
 
     // Recursively add connected cells
     addAdjacentCellsToConnected = (connected, cell) => {
@@ -245,7 +247,6 @@ export default class Board {
 
         Object.keys(positionsDVONN)
             .forEach(cell => this.addAdjacentCellsToConnected(positionsDVONN, cell));
-
 
         let pruneCount = 0;
 

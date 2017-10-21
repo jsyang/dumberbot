@@ -3,7 +3,25 @@ A bot that beats Dumbot. This is currently only meant to work on a MacBook Air (
 
 ![1](board-screenshot.png)
 
+## Replay previous DVONN games (in SGF format)
+
+```
+yarn view-sgf [path to SGF file]
+```
+
 ## Todo
+
+- Score the board
+  - Absolute score (count fully surrounded pieces)
+  - Effective score (don't count pieces that are fully surrounded)
+
+- Strategy: minimax
+  - Calculate move that will minimize max possible score for the opponent's next move (board state in 2 moves)
+
+- Strategy: maximin
+  - Calculate move that will maximize min possible score for self after opponent's next move (board state in 2 moves)
+
+
 - Handle Placement phase
   - Count placed tokens
   - Enable board pruning after placement phase is over
@@ -53,6 +71,10 @@ A bot that beats Dumbot. This is currently only meant to work on a MacBook Air (
 
 4. TacticsLayer
 5. StrategicLayer
+
+6. GameViewer
+  - step through each frame of a DVONN SGF replay
+  - show statistics about current board
 
 ```
 

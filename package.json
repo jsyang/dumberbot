@@ -6,7 +6,8 @@
   "scripts": {
     "rebuild-robot": "cd node_modules/robotjs ; node-gyp rebuild",
     "start": "ts-node .",
-    "test": "ts-node test.ts"
+    "test": "ts-node test.ts",
+    "view-sgf": "./GameViewer/cli.ts"
   },
   "repository": {
     "type": "git",

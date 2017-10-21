@@ -50,7 +50,7 @@ const getGameStateSGF = () => {
 
 const init = () => {
     // Resize to fit relative offsets
-    execSync('./resize-gameplay-window.scpt');
+    execSync('./scripts/resize-gameplay-window.scpt');
 
     // Searching for reference pixel...
     const { width, height } = robot.getScreenSize();

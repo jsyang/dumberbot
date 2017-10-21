@@ -1,3 +1,4 @@
+// Convert terminal mouse click coords to cell (board position)
 export default (x, y) => {
     let i;
 
