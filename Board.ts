@@ -258,6 +258,23 @@ export default class Board {
         });
     };
 
+    getScore = () => {
+        const {state} = this;
+
+        const score = {
+            w: 0,
+            b: 0
+        };
+
+        Object.keys(state)
+            .forEach(cell => {
+                const stack                = state[cell];
+                score[getLastChar(stack)] += stack.length;
+            });
+        
+        return score;
+    };
+
     showBoardStacksAndOwnership = () => {
         console.log(`Showing stacks and ownership:`);        
         const { state } = this;
@@ -384,6 +401,7 @@ export default class Board {
 
     toString = (param) => {
         const displayState = this.analysisFunc(param);
+        const score = this.getScore();
 
         // @formatter:off
         const {
@@ -408,7 +426,9 @@ export default class Board {
             ` ${A3}  ${B3}  ${C3}  ${D3}  ${E3}  ${F3}  ${G3}  ${H3}  ${I3}  ${J3}  ${K3}`,
             `   ${A2}  ${B2}  ${C2}  ${D2}  ${E2}  ${F2}  ${G2}  ${H2}  ${I2}  ${J2}`,
             `     ${A1}  ${B1}  ${C1}  ${D1}  ${E1}  ${F1}  ${G1}  ${H1}  ${I1}`,
-            ''
+            '',
+            ` white score = ${score.w}`,
+            ` black score = ${score.b}`
         ].join('\n')
     };
 }

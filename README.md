@@ -11,10 +11,6 @@ yarn view-sgf [path to SGF file]
 
 ## Todo
 
-- Score the board
-  - Absolute score (count fully surrounded pieces)
-  - Effective score (don't count pieces that are fully surrounded)
-
 - Strategy: minimax
   - Calculate move that will minimize max possible score for the opponent's next move (board state in 2 moves)
 
