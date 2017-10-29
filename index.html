@@ -1,9 +1,18 @@
 <html>
 
 <style>
+    body {
+        overflow: hidden;
+    }
+
     #board {
+        width: 900px;
+        margin-left: auto;
+        margin-right: auto;
         margin-top: 32px;
         margin-bottom: 32px;
+        transform-style: preserve-3d;
+        transform: perspective(800px) rotateX(50deg);
     }
 
     .row {
@@ -14,17 +23,19 @@
     .cell {
         cursor: pointer;
         margin: 0 0 0 32px;
-        box-sizing: border-box;
+        box-sizing: content-box;
         position: relative;
         font-family: sans-serif;
+        font-weight: bold;
+        user-select: none;
         display: inline-block;
         width: 32px;
         height: 32px;
-        border: 1px solid black;
+        border: 8px solid rgba(20, 20, 20, 0.05);
     }
 
     .cell:hover {
-        background: red;
+        background: magenta;
     }
 
     .cell:after {
@@ -32,12 +43,13 @@
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-        width: 94px;
-        height: 94px;
+        width: 110px;
+        height: 110px;
         pointer-events: none;
         position: absolute;
         content: '';
-        opacity: 0.1;
+        opacity: 0.2;
+        z-index: -1;
         background-image: url('hex.svg');
         background-position: center;
         background-size: contain;
@@ -45,6 +57,8 @@
     }
 
     .cell:before {
+        z-index: -1;
+        pointer-events: none;
         content: attr(data-cell);
         color: rgba(20, 20, 20, 0.2);
         position: absolute;
@@ -55,28 +69,100 @@
 
     [data-cell="C5"],
     [data-cell="A1"] {
-        margin-left: 96px;
+        margin-left: 116px;
     }
 
     [data-cell="B4"],
     [data-cell="A2"] {
-        margin-left: 64px;
+        margin-left: 74px;
+    }
+
+    #setup {
+        margin-bottom: 32px;
     }
 
     #log {
-        border:1px solid rgba(20, 20, 20, 0.2);
+        border: 1px solid rgba(20, 20, 20, 0.2);
         height: 8em;
         overflow: auto;
+        white-space: pre-wrap;
         font-family: monospace;
+    }
+
+    .ring {
+        pointer-events: none;
+        height: 100%;
+        background: transparent;
+        border-radius: 300px;
+        box-sizing: border-box;
+        /* transform: translateZ(20px); */
+        box-shadow: rgba(20, 20, 20, 0.6) 0px 4px 16px;
+    }
+
+    .ring[data-color='b'] {
+        background-color: rgb(120, 120, 120);
+        border: 2px solid rgba(100, 100, 100, 0.6);
+    }
+
+    .ring[data-color='w'] {
+        background-color: rgb(255, 255, 255);
+        border: 2px solid rgba(200, 200, 200, 0.6);
+    }
+
+    .ring[data-color='d'] {
+        background-color: rgb(255, 0, 0);
+        border: 2px solid rgba(200, 0, 0, 0.6);
     }
 </style>
 
 <body onload="createBoard()">
     <div id="board"></div>
-    <div id="log">fdsfd</div>
+    <div id="setup">
+        <button onclick="setHumanColor()">Set human color</button>
+    </div>
+    <div id="log"></div>
 </body>
 
 <script>
+    const humanColorName = {
+        w : 'white',
+        b : 'black',
+        d : 'DVONN'
+    };
+
+    function setOwner(res) {
+        const {from,to,stack}=res;
+
+        const el = document.querySelector('div[data-cell="' + to + '"]');
+        el.setAttribute('data-owner', stack);
+        const newRing = document.createElement('div');
+        newRing.classList.add('ring');
+        newRing.setAttribute('data-color', stack);
+        el.appendChild(newRing);
+
+        if(from) {
+            log(`${1}`);
+        } else {      
+            log(`Dropped a ${humanColorName[stack]} token at ${to}.`);
+        }
+    }
+
+    const toJSON = res => res.json();
+
+    function onResponse(res) {
+        res.forEach(setOwner);
+    }
+
+    function setHumanColor() {
+        const color = prompt(`Choose your color:\n\nType 'w' for white.\nType 'b' for black.`, 'w');
+        if (color) {
+            const colorAI = color === 'w' ? 'b' : 'w';
+            fetch(`/set/human/${color}`)
+                .then(toJSON)
+                .then(onResponse);
+        }
+    }
+
     function createRow(cells) {
         const cellsHTML = cells.split(',')
             .map(cell => `<div class='cell' data-cell='${cell}' onclick='onClickCell(this)'></div>`)
@@ -98,17 +184,17 @@
     };
 
     function log(message) {
-
-        const newMessage = document.createElement('div');
-        newMessage.innerText = message;
-
         const logEl = document.getElementById('log');
-        logEl.appendChild(newMessage);
+        logEl.innerHTML += `${message}\n`;
         logEl.scrollTop = 1e20;
     }
 
     function onClickCell(el) {
-        log(el.getAttribute('data-cell'));
+        const to = el.getAttribute('data-cell');
+
+        fetch(`/move/${to}`)
+            .then(toJSON)
+            .then(onResponse);
     }
 </script>
 
