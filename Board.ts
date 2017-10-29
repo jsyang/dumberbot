@@ -41,13 +41,23 @@ const pad2 = s => {
     }
 };
 
+interface IScoredMove {
+    from: string;
+    to: string;
+    scoreDifference: number;
+}
+
 export default class Board {
     analysisFunc: Function;
 
+    state: any;
     playerColor = 'w';
-    state: any = createState();
     history: string[] = [];
-    
+
+    constructor(state = createState()) {
+        this.state = state;
+    }
+
     getDiagonalsForCell = name => {
         const column = name[0];
         const row = name[1];
@@ -119,7 +129,7 @@ export default class Board {
 
             return this.getPossibleMovesForCell(cell)
                 .filter(c => c.dist === stackHeight)
-                .filter(c => 
+                .filter(c =>
                     this.state[c.name] && this.state[c.name].length > 0
                 );
         }
@@ -213,7 +223,7 @@ export default class Board {
 
     undo = () => {
         this.history.pop();
-        const lastState = this.history[this.history.length -1];
+        const lastState = this.history[this.history.length - 1];
 
         if (lastState) {
             this.state = JSON.parse(lastState);
@@ -258,9 +268,8 @@ export default class Board {
         });
     };
 
-    getScore = () => {
-        const {state} = this;
-
+    // Can accept a given state as well
+    getScore = (state = this.state) => {
         const score = {
             w: 0,
             b: 0
@@ -268,15 +277,15 @@ export default class Board {
 
         Object.keys(state)
             .forEach(cell => {
-                const stack                = state[cell];
+                const stack = state[cell];
                 score[getLastChar(stack)] += stack.length;
             });
-        
+
         return score;
     };
 
     showBoardStacksAndOwnership = () => {
-        console.log(`Showing stacks and ownership:`);        
+        console.log(`Showing stacks and ownership:`);
         const { state } = this;
         const displayState = JSON.parse(JSON.stringify(state));
 
@@ -379,6 +388,38 @@ export default class Board {
         return displayState;
     };
 
+    // Calculate all legal moves for color at current state and
+    // include objective metric (score)
+    getAllLegalMovesByColor = (color: string) => {
+        const { state } = this;
+        const legalMoves: IScoredMove[] = [];
+        const currentScore = this.getScore()[color];
+
+        Object.keys(state)
+            .filter(cell => {
+                const owner = getLastChar(state[cell]);
+                return owner === color;
+            })
+            .forEach(cell => {
+                this.getLegalMovesForCell(cell)
+                    .forEach(move => {
+                        const newBoard = new Board({ ...this.state });
+                        newBoard.moveStack(color, cell, move.name);
+                        newBoard.pruneDeadCells();
+                        
+                        const newScore = newBoard.getScore()[color];
+
+                        legalMoves.push({
+                            from           : cell,
+                            to             : move.name,
+                            scoreDifference: newScore - currentScore
+                        });
+                    });
+            });
+
+        return legalMoves;
+    };
+
     showLegalMoves = (cell: string) => {
         console.log(`Showing possible moves for ${cell}:`);
         const { state } = this;
@@ -393,6 +434,45 @@ export default class Board {
                 displayState[c] = displayState[c].gray.bgYellow;
             } else {
                 displayState[c] = displayState[c].gray.bgBlue;
+            }
+        });
+
+        return displayState;
+    };
+
+    showLegalMovesScored = (cell: string) => {
+        const { state } = this;
+
+        let color = getLastChar(state[cell]);
+        color = color === 'w' ? 'white'.white : 'black'.gray;
+
+        console.log(`Showing difference in score for all legal moves for ${color}:`);
+
+        const displayState = JSON.parse(JSON.stringify(state));
+        const scoredMoves = this.getAllLegalMovesByColor(color);
+
+        const toCells = {};
+
+        scoredMoves.forEach((move: IScoredMove) => {
+            const currentToScore = toCells[move.to] || -Infinity;
+
+            if (currentToScore < move.scoreDifference) {
+                toCells[move.to] = move.scoreDifference;
+            }
+        });
+
+        Object.keys(displayState).forEach(c => {
+            const bestScore = toCells[c];
+            if (typeof bestScore !== 'undefined') {
+                if (bestScore < 0) {
+                    displayState[c] = `${bestScore}`.blue;
+                } else if (bestScore === 0) {
+                    displayState[c] = ` 0`.red;
+                } else if (bestScore > 0) {
+                    displayState[c] = `+${bestScore}`.magenta;
+                }
+            } else {
+                displayState[c] = '__';
             }
         });
 

@@ -39,6 +39,10 @@ process.stdin.on('keypress', (ch, key) => {
         gameViewer
             .back()
             .show();
+    } else if (key.name === 'w') {
+        gameViewer.showLocality('w');
+    } else if (key.name === 'b') {
+        gameViewer.showLocality('b');
     } else if (key.ctrl && key.name == 'c') {
         process.stdin.pause();
     } else {

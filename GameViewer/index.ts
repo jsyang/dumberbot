@@ -90,10 +90,17 @@ export default class GameViewer {
         );
     };
 
+    showLocality = (color:string) => {
+        const {board} = this;
+        board.analysisFunc = board.showBoardLocality;
+        console.log(board.toString(color));
+    };
+
     showLegalMovesForCell = (cell:string) => {
         const {board} = this;
         
-        board.analysisFunc = board.showLegalMoves;
+        //board.analysisFunc = board.showLegalMoves;
+        board.analysisFunc = board.showLegalMovesScored;
         console.log(board.toString(cell));
     };
 }
