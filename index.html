@@ -11,8 +11,9 @@
         margin-right: auto;
         margin-top: 32px;
         margin-bottom: 32px;
-        transform-style: preserve-3d;
-        transform: perspective(800px) rotateX(50deg);
+        transform: rotate(180deg);
+        /* transform-style: preserve-3d;
+        transform: perspective(800px) rotateX(50deg); */
     }
 
     .row {
@@ -64,7 +65,12 @@
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%) rotate(180deg);
+    }
+
+    .cell.picked:after {
+        transition: opacity 0.3s;
+        opacity: 0.8;
     }
 
     [data-cell="C5"],
@@ -92,11 +98,12 @@
     .ring {
         pointer-events: none;
         height: 100%;
+        margin-top: -80%;
         background: transparent;
         border-radius: 300px;
         box-sizing: border-box;
-        /* transform: translateZ(20px); */
-        box-shadow: rgba(20, 20, 20, 0.6) 0px 4px 16px;
+        transform: translateY(24px);
+        box-shadow: rgba(20, 20, 20, 0.6) 0px -2px 16px;
     }
 
     .ring[data-color='b'] {
@@ -119,19 +126,22 @@
     <div id="board"></div>
     <div id="setup">
         <button onclick="setHumanColor()">Set human color</button>
+        <button onclick="getScore()">Get score</button>
     </div>
     <div id="log"></div>
 </body>
 
 <script>
+    let isPlacementPhase = true;
+
     const humanColorName = {
-        w : 'white',
-        b : 'black',
-        d : 'DVONN'
+        w: 'white',
+        b: 'black',
+        d: 'DVONN'
     };
 
     function setOwner(res) {
-        const {from,to,stack}=res;
+        const { from, to, stack } = res;
 
         const el = document.querySelector('div[data-cell="' + to + '"]');
         el.setAttribute('data-owner', stack);
@@ -140,17 +150,36 @@
         newRing.setAttribute('data-color', stack);
         el.appendChild(newRing);
 
-        if(from) {
+        if (from) {
             log(`${1}`);
-        } else {      
+        } else {
             log(`Dropped a ${humanColorName[stack]} token at ${to}.`);
         }
     }
 
     const toJSON = res => res.json();
 
-    function onResponse(res) {
-        res.forEach(setOwner);
+    function onResponseScore(res) {
+        const { w, b } = res.scores;
+        log(`Scores ---\nWhite: ${w}\nBlack: ${b}`);
+
+        if (res.isGameOver) {
+            log(`Game over! ${w > b ? 'White' : 'Black'} wins!`);
+        }
+    }
+
+    function getScore() {
+        fetch(`/score`)
+            .then(toJSON)
+            .then(onResponseScore);
+    }
+
+    function onResponsePlacement(res) {
+        if (res.isPlacementPhase === false) {
+            isPlacementPhase = false;
+        } else {
+            res.forEach(setOwner);
+        }
     }
 
     function setHumanColor() {
@@ -159,7 +188,7 @@
             const colorAI = color === 'w' ? 'b' : 'w';
             fetch(`/set/human/${color}`)
                 .then(toJSON)
-                .then(onResponse);
+                .then(onResponsePlacement);
         }
     }
 
@@ -189,12 +218,58 @@
         logEl.scrollTop = 1e20;
     }
 
+    function moveStack(move) {
+        const { from, to, pruned } = move;
+        const qs = document.querySelector.bind(document);
+
+        const fromCell = qs('[data-cell=' + from + ']');
+        const fromHTML = fromCell.innerHTML;
+        fromCell.innerHTML = '';
+
+        const toCell = qs('[data-cell=' + to + ']');
+        toCell.innerHTML = `${toCell.innerHTML}${fromHTML}`;
+
+        pruned.forEach(cell => {
+            qs('[data-cell=' + cell + ']').innerHTML = '';
+        });
+
+        log(`Moved stack from ${from} onto ${to}.`);
+    }
+
+    function onResponseMove(res) {
+        res.forEach(moveStack)
+    }
+
+    let moving;
+
     function onClickCell(el) {
         const to = el.getAttribute('data-cell');
 
-        fetch(`/move/${to}`)
-            .then(toJSON)
-            .then(onResponse);
+        if (isPlacementPhase) {
+            fetch(`/drop/${to}`)
+                .then(toJSON)
+                .then(onResponsePlacement);
+        } else {
+            el.classList.add('picked');
+
+            if (moving) {
+                moving.to = to;
+
+                Array.from(document.querySelectorAll('.picked'))
+                    .forEach(el => el.classList.remove('picked'));
+
+                if (moving.from !== moving.to) {
+                    fetch(`/move/${moving.from}/${moving.to}`)
+                        .then(toJSON)
+                        .then(onResponseMove);
+                }
+
+                moving = null;
+            } else {
+                moving = { from: to };
+            }
+        }
+
     }
 </script>
 

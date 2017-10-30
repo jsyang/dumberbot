@@ -41,7 +41,7 @@ const pad2 = s => {
     }
 };
 
-interface IScoredMove {
+export interface IScoredMove {
     from: string;
     to: string;
     scoreDifference: number;
@@ -57,6 +57,8 @@ export default class Board {
     constructor(state = createState()) {
         this.state = state;
     }
+
+    getOwnerByCell = cell => getLastChar(this.state[cell]);
 
     getDiagonalsForCell = name => {
         const column = name[0];
@@ -258,14 +260,16 @@ export default class Board {
         Object.keys(positionsDVONN)
             .forEach(cell => this.addAdjacentCellsToConnected(positionsDVONN, cell));
 
-        let pruneCount = 0;
+        const prunedCells:any = [];
 
         Object.keys(state).forEach(cell => {
             if (!(cell in positionsDVONN)) {
                 state[cell] = '';
-                pruneCount++;
+                prunedCells.push(cell);
             }
         });
+
+        return prunedCells;
     };
 
     // Can accept a given state as well
@@ -406,7 +410,7 @@ export default class Board {
                         const newBoard = new Board({ ...this.state });
                         newBoard.moveStack(color, cell, move.name);
                         newBoard.pruneDeadCells();
-                        
+
                         const newScore = newBoard.getScore()[color];
 
                         legalMoves.push({

@@ -3,6 +3,14 @@ A bot that beats Dumbot. This is currently only meant to work on a MacBook Air (
 
 ![1](board-screenshot.png)
 
+## Play against the current version of the dumberbot
+
+```
+yarn web
+```
+
+and then open http://localhost:3000 in your browser.
+
 ## Replay previous DVONN games (in SGF format)
 
 ```
@@ -16,12 +24,6 @@ yarn view-sgf [path to SGF file]
 
 - Strategy: maximin
   - Calculate move that will maximize min possible score for self after opponent's next move (board state in 2 moves)
-
-
-- Handle Placement phase
-  - Count placed tokens
-  - Enable board pruning after placement phase is over
-  - Locality: tendency to occupy positions that have low locality (disperse own rings evenly)
 
 - Implement basic strategy using disposition, locality, and composition
   - Compute defensive values for every cell on the board
@@ -65,10 +67,9 @@ yarn view-sgf [path to SGF file]
   - segregate game phases: placement phase and in-play phase
   - calculate game length in "frames"
 
-4. TacticsLayer
-5. StrategicLayer
+4. Strategies
 
-6. GameViewer
+5. GameViewer
   - step through each frame of a DVONN SGF replay
   - show statistics about current board
 

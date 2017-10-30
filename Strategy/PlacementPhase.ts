@@ -18,17 +18,17 @@ function reset() {
     board = new Board();
     friendlyColor = 'b';
     enemyColor = 'w';
-    
+
     stackRemaining = {
         w: INITIAL_PIECES.w.split(''),
         b: INITIAL_PIECES.b.split('')
     };
 }
 
-const getFreeCells = () => Object.keys(board.state).filter(cell => board.state[cell].length === 0);
+const getEmptyCells = () => Object.keys(board.state).filter(cell => board.state[cell].length === 0);
 
 const getRandomCellForPlacement = () => {
-    const freeCells = getFreeCells();
+    const freeCells = getEmptyCells();
 
     return freeCells[Math.floor(freeCells.length * Math.random())];
 };
@@ -44,8 +44,6 @@ function doFriendlyMove() {
             to: getRandomCellForPlacement()
         };
 
-        console.log(move);
-
         board.dropStack(move.stack, move.to);
 
         return move;
@@ -60,14 +58,20 @@ function step(params: any = {}) {
         const enemyStack = stackRemaining[enemyColor].shift();
         let move;
 
-        if (enemyStack && getFreeCells().indexOf(to) !== -1) {
-            board.dropStack(enemyStack, to);
-            move = { stack: enemyStack, to };
-
-            return [
-                move,
-                doFriendlyMove()
-            ].filter(Boolean);
+        if (enemyStack) {
+            if(getEmptyCells().indexOf(to) !== -1) {
+                board.dropStack(enemyStack, to);
+                move = { stack: enemyStack, to };
+    
+                return [
+                    move,
+                    doFriendlyMove()
+                ].filter(Boolean);
+            } else {
+                stackRemaining[enemyColor].unshift(enemyStack);
+                return [];
+            }
+            
         } else {
             return [];
         }
@@ -82,7 +86,10 @@ function step(params: any = {}) {
 
 export default {
     reset,
-    getTotalRemainingMoves,
+    getBoardState   : () => board.state,
+    getFriendlyColor: () => friendlyColor,
+    getEnemyColor   : () => enemyColor,
+
     setEnemyColor: color => {
         console.log(`Human is ${color}!`);
         enemyColor = color;
@@ -95,5 +102,7 @@ export default {
             friendlyColor = 'b';
         }
     },
+
+    getTotalRemainingMoves,
     step
 };
