@@ -25,6 +25,8 @@ yarn view-sgf [path to SGF file]
 - Strategy: maximin
   - Calculate move that will maximize min possible score for self after opponent's next move (board state in 2 moves)
 
+- Sliders on web interface for weighting of minimax or maximin strategy perference and depth of search
+
 - Implement basic strategy using disposition, locality, and composition
   - Compute defensive values for every cell on the board
   - Compute offensive values for every cell on the board

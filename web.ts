@@ -1,11 +1,14 @@
 #!/usr/bin/env node_modules/.bin/ts-node
 
+// API for playing against DumberBot
+
 import * as express from 'express';
 import PlacementPhase from './Strategy/PlacementPhase';
 import PlayPhase from './Strategy/PlayPhase';
 
 const app = express();
 
+// Static files middleware
 const sendFile = file => (
     (req, res) => res.sendFile(`${__dirname}/${file}`)
 );
@@ -14,6 +17,7 @@ app.use(express.json());
 
 app.get('/',
     (req, res, next) => {
+        // Reset the game state every time the client refreshes the page
         PlacementPhase.reset();
         next();
     },
@@ -64,4 +68,4 @@ app.get('/score', (req, res) => {
     });
 });
 
-app.listen(3000, () => console.log('Web server listening on :3000'));
+app.listen(3000, () => console.log('DumberBot API listening on :3000'));
